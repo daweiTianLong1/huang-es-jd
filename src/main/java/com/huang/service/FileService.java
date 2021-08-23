@@ -27,13 +27,12 @@ public class FileService {
                 object.put("Fail","文件不能为空");
                 return object.toString();
             }
-            String fileName = files[i].getOriginalFilename();
-            if(!FileUtils.isLrc(fileName)){
+            if(!FileUtils.isLrc(files[i])){
                 object.put("Fail","文件的类型名必须为lrc格式");
                 return object.toString();
             }
             try{
-                files[i].transferTo(FileUtils.getFile(fileName));
+                files[i].transferTo(FileUtils.getFile(files[i]));
             }catch (Exception e){
                 log.error("{}",e);
                 object.put("success",2);

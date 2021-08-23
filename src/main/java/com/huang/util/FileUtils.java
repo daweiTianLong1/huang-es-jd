@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 @Slf4j
 public class FileUtils {
@@ -34,14 +35,14 @@ public class FileUtils {
 
     /**
      * 通过文件名来判断文件的后缀名是否是lrc
-     * @param fileName 文件名字
+     * @param files 文件名字
      * @return
      */
-    public static boolean isLrc(String fileName){
+    public static boolean isLrc(MultipartFile files){
 
-        int indexName = fileName.indexOf(".");
-        String suffixName = fileName.substring(indexName + 1);
-        if(FILE_SUFFIX.equals(suffixName)){
+//        int indexName = fileName.indexOf(".");
+//        String suffixName = fileName.substring(indexName + 1);
+        if(FILE_SUFFIX.equals(getExtension(files))){
             return true;
         }else {
             return false;
@@ -49,15 +50,26 @@ public class FileUtils {
 
     }
 
+    /**
+     * 此处自定义文件名，UUID + extension
+     * @param file
+     * @return
+     */
+    private static String getPathName(MultipartFile file) {
+        String extension = getExtension(file);
+        System.out.println(UUID.randomUUID().toString() + "." + extension);
+        return UUID.randomUUID().toString() + "." + extension;
+    }
+
 
     /**
      * 获取file的对象
-     * @param fileName
+     * @param files
      * @return
      */
-    public static File getFile(String fileName) throws IOException {
+    public static File getFile(MultipartFile files) throws IOException {
 
-        File file = new File(UPLOAD_PATH + "/" + fileName);
+        File file = new File(UPLOAD_PATH + "/" + getPathName(files));
         //判断要上传的目录是否存在，如果不存在就创建一个目录
         if(!file.getParentFile().exists()){
 
@@ -67,21 +79,21 @@ public class FileUtils {
         if(!file.exists()){
             file.createNewFile();
         }
+        System.out.println(file);
         return file;
 
     }
 
-//    public static boolean isEmpty(MultipartFile file) throws Exception {
-//
-//        JSONObject object = new JSONObject();
-//        if(file.isEmpty()){
-//            object.put("Fail","不能上传空文件");
-//
-//            throw new Exception(object.toString());
-//        }
-//        return true;
-//    }
 
+    /**
+     * 获取文件拓展名
+     * @param file
+     * @return
+     */
+    private static String getExtension(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        return originalFilename.substring(originalFilename.lastIndexOf('.') + 1);
+    }
 
 
 

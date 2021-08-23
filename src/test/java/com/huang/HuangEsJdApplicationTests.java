@@ -17,8 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -103,7 +106,6 @@ class HuangEsJdApplicationTests {
 				System.out.println(f);
 			}
 			try {
-				System.out.println(f);
 				Path path = Paths.get(f.getPath());
 				System.out.println(path);
 				byte[] data = Files.readAllBytes(path);
@@ -116,7 +118,7 @@ class HuangEsJdApplicationTests {
 				}
 
 				encoding = match.getName();
-
+				System.out.println(encoding);
 				switch (encoding){
 
 					case "UTF-8":
@@ -141,6 +143,44 @@ class HuangEsJdApplicationTests {
 		System.out.println("ISO-8859-1格式的文件数量为：" + count);
 
 	}
+
+	@Test
+	public void test9(){
+
+
+		String path = "C:\\Users\\Admin\\Desktop\\123";
+		File file = new File(path);
+
+		File[] files = file.listFiles();
+		for(File f : files){
+
+			try {
+				System.out.println(f);
+				Path path1 = Paths.get(f.getPath());
+				byte[] data = Files.readAllBytes(path1);
+				CharsetDetector detector = new CharsetDetector();
+				detector.setText(data);
+				CharsetMatch match = detector.detect();
+				String encoding = match.getName();
+				System.out.println(encoding);
+				InputStreamReader read = new InputStreamReader(
+						new FileInputStream(f), encoding);
+				BufferedReader bufferedReader = new BufferedReader(read);
+				String line;
+				while((line = bufferedReader.readLine())!=null){
+					System.out.println(line);
+				}
+				read.close();
+
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
+
+
 
 }
 
